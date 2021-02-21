@@ -1,38 +1,36 @@
-create or replace function excluir_linha_e_col( mat numeric[][] , i int, j int ) returns numeric[][] as $$
+create or replace function excluir_linha_e_col( mat float[][] , i int, j int ) returns float[][] as $$
 declare
-    x int := array_length( mat , 2 );
-    y int := array_length( mat , 1 );
-    Arr numeric[][];
-    L numeric[];
-    
+    height int := array_length( mat , 1 );
+    width int  := array_length( mat , 2 );
+
+    L float[];
+    arr float[][];
+
 begin
-    
--- Achatando a matriz original enquanto remove a linha e coluna desejadas
-    L := '{}';
-    for a in 1..y loop
-        continue when a = i;
-        for b in 1..x loop
-            continue when b = j;
-            L := array_append( L , mat[a][b] );
-        end loop;
-    end loop;
-    --raise notice '%' , L;
 
--- "Enrolando" em uma nova matriz   
-    Arr := array_fill( null :: numeric , array[ y - 1 , x - 1 ] );
-    for a in 1..( y - 1 ) loop
-        for b in 1..( x - 1 ) loop
-            Arr[ a ][ b ] := L[ ( a - 1 )*( x - 1 ) + b ];
+    L = '{}';
+    for x in 1..height loop
+        continue when x = i;
+        for y in 1..width loop
+            continue when y = j;
+            L := array_append( L , mat[ x ][ y ])
         end loop;
     end loop;
 
-    return Arr;
+    arr := array_fill( null :: float , array[ height - 1 , width - 1 ] );
+    for x in 1..( height - 1 ) loop
+        for y in 1..(width - 1 ) loop
+            arr[ x ][ y ] := L[ ( x - 1 )*width + y ];
+        end loop;
+    end loop;
+
+    return arr;
 end;
 $$ language plpgsql;
 
-create or replace procedure show_arr( m numeric[][] ) as $$
+create or replace procedure show_arr( m float[][] ) as $$
 declare
-    x numeric [];
+    x float [];
 begin
     raise notice '';
     foreach x slice 1 in array m loop
@@ -44,7 +42,7 @@ $$ language plpgsql;
 
 create or replace procedure exercicio4() as $$
 declare
-    Ar_ex4 numeric[][] := '{
+    Ar_ex4 float[][] := '{
     { 4, 1, 0, 5 },
     { 3, 6, 4, 3 },
     { 4, 6, 5, 1 },
@@ -53,19 +51,21 @@ declare
     { 8, 6, 4, 8 }
     }';
 
-    i int := 2;
-    j int := 3;
 
-    Arr_prime numeric[][];
+    Arr_prime float[][];
 begin
     raise notice 'Antes de remover';
     raise notice '--------------------------';
     call show_arr( Ar_ex4 );
 
-    Arr_prime := excluir_linha_e_col( Ar_ex4 , i , j );
-    raise notice 'Depois de remover';
-    raise notice '--------------------------';
-    call show_arr( Arr_prime );
+    for i in 1..5 loop
+        for j in 1..4 loop
+            Arr_prime := excluir_linha_e_col( Ar_ex4 , i , j );
+            raise notice 'Depois de remover % %', i , j;
+            raise notice '--------------------------';
+            call show_arr( Arr_prime );
+        end loop;
+    end loop;
 
 end;
 $$ language plpgsql;
