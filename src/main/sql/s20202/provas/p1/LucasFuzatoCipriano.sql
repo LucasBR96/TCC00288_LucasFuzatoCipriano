@@ -122,3 +122,48 @@ insert into escolha values (5,1,1,2);
 insert into escolha values (5,1,2,1);
 insert into escolha values (5,1,3,1);
 
+-- Resposta Aqui
+
+create or replace function resultado ( p_pesquisa int , p_bairros varchar [] , p_cidades varchar[] )
+returns table ( pergunta int , histograma float[] ) as $$
+begin
+
+    return query
+    with
+    admite as(
+        select * from(
+            pergunta inner join resposta 
+            on
+                pergunta.pesquisa = resposta.pesquisa
+                and
+                pergunta.numero = resposta.pergunta
+        ) as foo
+        where 
+            foo.pesquisa = p_pesquisa
+        ) 
+    )
+    ,escolhas_filt as(
+        select * from escolha
+        where
+            escolha.pesquisa = p_pesquisa
+    )
+    select * from admite natural join escolhas_filt
+
+end;
+$$ language plpgsql;
+
+create or replace procedure prova_1() as $$
+declare
+    bairro varchar[3] := '{ "Tijuca", "Centro", "Moema"}';
+    cid varchar[2] := '{ "Rio de Janeiro", "São Paulo"}';
+    pesquisa int := 1;
+begin
+    perform resultado( pesquisa, bairro, cid );
+end;
+$$ language plpgsql;
+
+do $$
+begin
+    call prova_1();
+end $$;
+
