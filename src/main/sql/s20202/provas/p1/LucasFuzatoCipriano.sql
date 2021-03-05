@@ -126,6 +126,7 @@ insert into escolha values (5,1,3,1);
 
 ---------------------- Resposta Aqui ----------------------------------------------
 
+-- Resposta Aqui
 
 create or replace function resultado ( p_pesquisa int , p_bairros varchar [] , p_cidades varchar[] )
 returns table ( pergunta int , histograma float[] ) as $$

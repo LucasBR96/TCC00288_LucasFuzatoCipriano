@@ -1,18 +1,18 @@
-drop table if exists bairro cascade
+drop table if exists bairro cascade;
 create table bairro(
     bairro_id integer not null,
     nome text not null,
     constraint bairro_pk primary key ( bairro_id )
 );
  
-drop table if exists cidade cascade
+drop table if exists cidade cascade;
 create table cidade(
     cidade_id integer not null,
     nome text not null,
     constraint cidade_pk primary key ( cidade_id )
 );
  
-drop table if exists antena cascade
+drop table if exists antena cascade;
 create table antena(
     antena_id integer not null,
     bairro_id integer not null,
@@ -25,7 +25,7 @@ create table antena(
 
 );
  
-drop table if exists ligacao cascade
+drop table if exists ligacao cascade;
 create table ligacao(
     ligacao_id  bigint not null,
     antena_orig integer not null,

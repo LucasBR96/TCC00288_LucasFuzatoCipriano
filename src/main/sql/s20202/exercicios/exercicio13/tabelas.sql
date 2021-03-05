@@ -57,38 +57,13 @@ insert into partida values
     ( '001', 13, 'FLU', 'MAD', 0, 1, '01/01/2015'::date ),
     ( '001', 14, 'OLA', 'MAD', 3, 1, '01/01/2015'::date );
 
-with partidas_filtradas as(
-    select numero, time1, time2, gols1, gols2 from partida
-    where partida.campeonato in(
-        select codigo from campeonato
-        where campeonato.nome = 'Carioca'
-    )
-)
-,vitorias_time as ( 
-    select time1 as "time", 
-    count( numero ) as "vitorias" 
-    from(
-        select numero, time1 from partidas_filtradas
-        where partidas_filtradas.gols1 > partidas_filtradas.gols2
-        union
-        select numero, time2 from partidas_filtradas
-        where partidas_filtradas.gols2 > partidas_filtradas.gols1
-    ) as foo group by time1
-)
-,sem vitorias as(
-    
-)
-,empates as(
-    select time1 , time2 , numero from partidas_filtradas
-    where gols1 = gols2 
-)
-,empates_time as(
-    select time1 as "time",
-    count( numero ) as "empates" 
-    from(
-        select time1 , numero from empates
-        union
-        select time2 , numero from empates
-    ) as foo group by time1
-)
-select * from vitorias_time natural join empates_time;
+drop table if exists resultado cascade;
+create table resultado(
+    time_pr text not null,
+    pontos int not null,
+    vitorias int not null
+);
+
+
+
+
