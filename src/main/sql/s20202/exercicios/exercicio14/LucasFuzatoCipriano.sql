@@ -1,3 +1,11 @@
+DO $$ BEGIN
+
+    PERFORM drop_functions();
+
+    PERFORM drop_tables();
+
+END $$;
+
 create or replace function lig_medias( date , date ) returns table( cidade text , bairro text , dur_med float ) as $$
 declare
     t_inicial alias for $1;

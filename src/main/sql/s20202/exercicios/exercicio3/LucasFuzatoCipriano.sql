@@ -1,4 +1,11 @@
 -- Aqui Ficara o Script
+DO $$ BEGIN
+
+    PERFORM drop_functions();
+
+    PERFORM drop_tables();
+
+END $$;
 
 -- Aqui fica a Multiplicacao
 CREATE FUNCTION mult( float [][] , int , int, float [][], int , int ) 

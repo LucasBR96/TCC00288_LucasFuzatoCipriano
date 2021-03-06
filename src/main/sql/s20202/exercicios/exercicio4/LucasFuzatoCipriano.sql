@@ -1,3 +1,11 @@
+DO $$ BEGIN
+
+    PERFORM drop_functions();
+
+    PERFORM drop_tables();
+
+END $$;
+
 create or replace function excluir_linha_e_col( mat float[][] , i int, j int ) returns float[][] as $$
 declare
     height int := array_length( mat , 1 );

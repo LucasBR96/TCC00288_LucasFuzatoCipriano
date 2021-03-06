@@ -1,3 +1,11 @@
+DO $$ BEGIN
+
+    PERFORM drop_functions();
+
+    PERFORM drop_tables();
+
+END $$;
+
 create or replace function operar_matriz( mat float[][] , m int , n int, k1 float , k2 float)
 returns float [][] as $$
 declare

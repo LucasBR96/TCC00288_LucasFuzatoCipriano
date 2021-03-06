@@ -1,3 +1,11 @@
+DO $$ BEGIN
+
+    PERFORM drop_functions();
+
+    PERFORM drop_tables();
+
+END $$;
+
 create or replace function contar_alvo( mat float[][], target float ) returns int as $$
 -- Essa função tem como objetivo achar, em uma matriz, a linha ou coluna com o maior nú-
 -- -mero de ocorrências de um valor desejado. se o valor for positivo é linha e negativo coluna

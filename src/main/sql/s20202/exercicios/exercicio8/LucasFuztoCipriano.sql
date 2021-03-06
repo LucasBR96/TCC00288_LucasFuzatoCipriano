@@ -1,3 +1,11 @@
+DO $$ BEGIN
+
+    PERFORM drop_functions();
+
+    PERFORM drop_tables();
+
+END $$;
+
 create or replace procedure fib_lst( int ) as $$
 declare
     n alias for $1;

@@ -1,4 +1,11 @@
 -- INCOMPLETA
+DO $$ BEGIN
+
+    PERFORM drop_functions();
+
+    PERFORM drop_tables();
+
+END $$;
 
 create or replace function area_med( varchar(20) ) returns float as $$
 declare

@@ -1,3 +1,11 @@
+DO $$ BEGIN
+
+    PERFORM drop_functions();
+
+    PERFORM drop_tables();
+
+END $$;
+
 create or replace function transpose_mat( mat float[][] ) returns float[][] as $$
 declare    
     height int := array_length( mat , 1 );
