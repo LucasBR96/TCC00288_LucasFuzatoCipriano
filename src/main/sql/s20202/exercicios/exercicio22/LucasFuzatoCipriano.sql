@@ -9,9 +9,9 @@ create table cliente(
 );
 
 create table conta_corrente(
-    start timestamp not null
+    comeco timestamp not null
     default now(),
-    fim timestamp default null,
+    fechada timestamp default null,
     id int primary key
 );
 
@@ -33,7 +33,7 @@ create table limite_credito(
     valor int not null,
     inicio timestamp not null
     default now(),
-    fim timestamp
+    fechada timestamp
 );
 
 create table movimento(
@@ -66,7 +66,7 @@ insert into correntista values
     ( 2, 3 ),
     ( 3, 3 );
 
-insert into conta_corrente( id , start , fim ) values
+insert into conta_corrente( id , comeco , fechada ) values
     ( 4,
     '01/01/2000' :: timestamp,
     '01/01/2005' :: timestamp 
@@ -81,97 +81,19 @@ insert into limite_credito( conta_id , valor ) values
 
 create or replace function obstruir_mov() returns trigger as $$
 declare
-    dia_num timestamp;
-    conta_num int;
-    delta_v int;
-    saldo int;
-
-    valido bool;
-    limite_c int;
-    saldo_c int;
-begin
-
-    dia_num = date_trunc( 'hour' , new.dia  );
-    conta_num = new.conta_id;
-    delta_v = new.valor_mov;
-
-    create temporary table if not exists saldo_diario(
-        dia timestamp,
-        conta_id int,
-        saldo int
-    );
-
-    select
-        fim = null 
-    into valido
-    from conta_corrente
-    where id = conta_num;
-
-    if valido then
-
-        select
-            valor
-        into
-            limite_c
-        from
-            limite_credito
-        where
-            conta_id = conta_num and
-            fim = null;
-        if not found then
-            limite_c = 0;
-        end if;
-
-        select
-            saldo
-        into
-            saldo_c
-        from
-            saldo_diario
-        where
-            conta_id = conta_num and
-            dia = dia_num;
-        if not found then
-            saldo_c = 0;
-            insert into saldo_diario values ( dia_num , conta_num , saldo_c );
-        end if;
-    end if;
-
-    if saldo_c + delta_v < -limite_c then 
-        delete from movimento
-        where dia = new.dia and conta_id = new.conta_id ;
-    else
-        update saldo_diario
-        set saldo = saldo_c + delta_v
-        where
-            conta_id = conta_num and
-            dia = dia_num;
-    end if;
-
-    
-    return null;
 end;
-$$ language plpgsql;
-
-/*
-create or replace obstruir_mov() returns trigger as $$
-declare
-    dia_num int;
-    conta_num int;
-    delta_v int;
-begin
-
-    create temporary table saldos_diarios
-
-
-end;
-$$ language plspsql;
-*/
 
 --Triggers----------------------------------------------
 
 create trigger obstruir
 after insert on movimento
-for each row perform procedure obstruir_mov();
+for each row execute procedure obstruir_mov();
 -- for each satement perform obstruir_mov()
 --Testes------------------------------------------------
+
+insert into movimento values
+    ( 100 , now() , 1 ),
+    ( 100 , now() , 2 ),
+    ( -5000, now() , 3 );
+
+select * from movimento;
