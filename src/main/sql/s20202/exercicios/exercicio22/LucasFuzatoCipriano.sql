@@ -173,7 +173,7 @@ declare
 begin
     
     -- tabela temporaria ---------------------------------------
-    create table if not exists saldo_hist(
+    create temporary table if not exists saldo_hist(
         conta_id int,
         dia timestamp,
         saldo int

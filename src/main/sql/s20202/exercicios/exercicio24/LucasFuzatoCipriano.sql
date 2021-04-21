@@ -141,30 +141,33 @@ begin
 end;      
 $$ language plpgsql;
 
-create or replace procedure eliminar_atrasos( timestamp ) as $$
-declare
-    mot int;
-    msg text;
-begin
-    with tabela_1 as( 
-        select
-        numero,
-        inicio + 1*interval '1day' as "prazo_chegada"
-        from reserva
-    ), tabela_2 as (
-        select numero
-        from estadia
-    ), tabela_3 as (
-        select * from tabela_1 
-        where 
-        numero not in ( select numero from tabela_2 )
-        and $1 >= prazo_chegada
-    )
-    delete from reserva 
-    where numero in( select numero from tabela_3 );
+-- create or replace procedure eliminar_atrasos( timestamp ) as $$
+-- declare
+--     mot int;
+--     msg text;
+-- begin
+
+-- --    create temporary table if not exists resv(
+-- --        numero int
+--     with tabela_1 as( 
+--         select
+--         numero,
+--         inicio + 1*interval '1day' as "prazo_chegada"
+--         from reserva
+--     ), tabela_2 as (
+--         select numero
+--         from estadia
+--     ), tabela_3 as (
+--         select * from tabela_1 
+--         where 
+--         numero not in ( select numero from tabela_2 )
+--         and $1 >= prazo_chegada
+--     )
+--     delete from reserva 
+--     where numero in( select numero from tabela_3 );
     
-end;      
-$$ language plpgsql;
+-- end;      
+-- $$ language plpgsql;
 
 -- funcoes dos triggers -------------------------------------------
 create or replace function analisar_reserva( ) returns trigger as $$
@@ -282,7 +285,7 @@ for each row execute function liberar_reserva();
 -- testes --------------------------------------------
 
 insert into reserva( numero, reservista, hotel_id, quarto_num, inicio, fim ) values
-    ( 1 , 1 , 1 , 1 , '01/01/2018'::timestamp , '07/01/2018'::timestamp ),
+    ( 1 , 1 , 1 , 1 , '02/01/2018'::timestamp , '07/01/2018'::timestamp ),
     ( 2 , 2 , 1 , 1 , '02/01/2018'::timestamp , '05/01/2018'::timestamp ),
     ( 3 , 3 , 1 , 2 , '10/01/2018'::timestamp , '12/01/2018'::timestamp ),
     ( 4 , 4 , 2 , 2 , '01/01/2018'::timestamp , '07/01/2018'::timestamp ),
@@ -290,7 +293,7 @@ insert into reserva( numero, reservista, hotel_id, quarto_num, inicio, fim ) val
 
 select * from reserva;
 
--- call eliminar_atrasos( '02/01/2018'::timestamp );
+-- eliminar_atrasos( '02/01/2018'::timestamp );
 
 insert into estadia( numero , reservista, inicio ) values
     ( 4 , 4 , '01/01/2018'::timestamp ),
